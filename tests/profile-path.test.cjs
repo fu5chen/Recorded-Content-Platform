@@ -1,0 +1,2 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const path=require('node:path');const {profilePath}=require('../profile-path.cjs');
+test('发布版与旧开发资料隔离，不从旧路径导入用户视频',()=>{const getPath=key=>({appData:'C:/Roaming',userData:'C:/Roaming/luke-studio'}[key]);assert.equal(profilePath({isPackaged:true,getPath}),path.join('C:/Roaming','RecordedContentPlatform'));assert.equal(profilePath({isPackaged:false,getPath}),'C:/Roaming/luke-studio');assert.notEqual(profilePath({isPackaged:true,getPath}),getPath('userData'));});

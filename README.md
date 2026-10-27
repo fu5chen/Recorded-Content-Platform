@@ -1,12 +1,10 @@
-# Recorded Content Platform · 录课工作台
+# 录课工作台 v0.6.1
 
-Windows 公司内部录屏与视频播放工具，支持局域网共享。
+此版本修复下载程序自动读取本机开发版视频库的问题。正式版资料目录为 `%APPDATA%/RecordedContentPlatform/library`；不会导入旧的 `%APPDATA%/luke-studio/library`。旧资料和原片保留，需要时可以手动导入。
 
-## 下载 Windows 程序
+发行 ZIP 不包含任何录制视频、字幕或用户数据库。新电脑首次打开为空视频库；同一正式版后续录制会保存在自己的正式版资料目录，升级不会自动清空。
 
-前往 [Releases](https://github.com/fu5chen/Recorded-Content-Platform/releases) 下载 Windows x64 ZIP，完整解压后双击 `录课工作台.exe`。无需安装 Node.js、Python 或 FFmpeg。请保留压缩包内的所有文件。当前版本 v0.6.0。
-
-源代码放在本仓库；完整运行包在 Releases。默认不包含任何个人录制视频、学员信息或本地资料库。
+Windows x64 下载见 [Releases](https://github.com/fu5chen/Recorded-Content-Platform/releases)。完整解压并双击“录课工作台.exe”。
 
 # 录课工作台（Windows 公司内部版）
 
@@ -14,7 +12,7 @@ Windows 公司内部录屏与视频播放工具，支持局域网共享。
 
 ## 启动
 
-打开 `release-realtime/win-unpacked/录课工作台.exe`。整个 `win-unpacked` 文件夹需要一起保留，不能单独移动其中的 exe。
+打开 `release-clean/win-unpacked/录课工作台.exe`。整个 `win-unpacked` 文件夹需要一起保留，不能单独移动其中的 exe。
 
 ## 日常使用
 
@@ -89,3 +87,5 @@ Electron 的录屏接入依据 [desktopCapturer 文档](https://www.electronjs.o
 
 ## v0.6.0 低延迟预览
 录制预览由每秒 5 帧 JPEG 编解码改为最大边长 480 像素的原始画面传输，目标约 30 帧每秒。仅允许一帧在途，小窗绘制后确认，再发送下一帧，避免积压。关闭或最小化小窗停止预览传输，录制继续；恢复或重新打开继续显示。实际流畅度受录制分辨率、设备负载和系统调度影响，正式视频的画质设置不变。
+
+发布前运行 `npm run audit:release` 检查发行目录及 app.asar 不含视频和数据库。构建只复制明确列出的 FFmpeg 与窗口边界脚本。

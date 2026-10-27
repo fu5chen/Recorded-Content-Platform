@@ -5,6 +5,7 @@ const path=require('node:path');
 const {pathToFileURL}=require('node:url');
 const {spawn}=require('node:child_process');
 const {randomUUID}=require('node:crypto');
+app.setPath('userData',require('./profile-path.cjs').profilePath(app));
 if(process.argv.includes('--smoke'))app.setPath('userData',path.join(app.getPath('temp'),'luke-studio-smoke-'+process.pid));
 protocol.registerSchemesAsPrivileged([{scheme:'studio-media',privileges:{standard:true,secure:true,supportFetchAPI:true,stream:true}}]);
 let win,root,db,selectedSource=null,recording=null,live=null;
@@ -21,11 +22,12 @@ function listen(name,fn){ipcMain.handle(name,async(e,...args)=>{if(e.sender!==wi
 app.whenReady().then(()=>{
  root=path.join(app.getPath('userData'),'library');fs.mkdirSync(path.join(root,'media'),{recursive:true});
  const p=path.join(root,'library.json');db=fs.existsSync(p)?JSON.parse(fs.readFileSync(p,'utf8')):{videos:[],courses:[],learners:[]};
+ if(process.argv.includes('--check-clean-profile')){fs.writeFileSync(path.join(app.getPath('temp'),'luke-privacy-check.json'),JSON.stringify({root,videos:db.videos.length,courses:db.courses.length,learners:db.learners.length}));app.quit();return;}
  protocol.handle('studio-media',request=>{const url=new URL(request.url);const v=db.videos.find(x=>x.id===url.hostname);if(!v)return new Response('Not found',{status:404});const file=url.pathname==='/subtitle'?v.subtitle:(v.seekFile||v.file);return file?mediaResponse(request,file):new Response('Not found',{status:404});});
  session.defaultSession.setPermissionRequestHandler((wc,permission,cb)=>cb(wc===win?.webContents&&['media','display-capture'].includes(permission)));
  session.defaultSession.setPermissionCheckHandler((wc,permission)=>wc===win?.webContents&&['media','display-capture'].includes(permission));
  session.defaultSession.setDisplayMediaRequestHandler(async(request,callback)=>{try{const sources=await desktopCapturer.getSources({types:['screen','window']});const source=sources.find(x=>x.id===selectedSource);if(!source)return callback({});callback({video:source,...(request.audioRequested?{audio:'loopback'}:{})});}catch{callback({});}});
- win=new BrowserWindow({width:1400,height:920,minWidth:1080,minHeight:760,title:'录课工作台 v0.6.0',backgroundColor:'#0c111b',webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});
+ win=new BrowserWindow({width:1400,height:920,minWidth:1080,minHeight:760,title:'录课工作台 v0.6.1',backgroundColor:'#0c111b',webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});
  preview=require('./preview.cjs').createPreview(win);
  win.on('closed',()=>preview.close());
  win.setMenuBarVisibility(false);

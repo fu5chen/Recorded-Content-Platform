@@ -12,3 +12,11 @@ release-preview/
 release-snap/
 
 release-realtime/
+
+release-clean/
+library/
+data/
+*.webm
+*.mp4
+*.mkv
+library.json*
