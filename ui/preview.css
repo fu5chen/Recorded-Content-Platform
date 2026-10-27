@@ -1,0 +1,1 @@
+body{margin:0;background:#0c111b;color:#dfe7fc;font:12px 'Microsoft YaHei',sans-serif;height:100vh;display:flex;flex-direction:column}header{display:flex;justify-content:space-between;padding:12px;color:#b9c3ff}canvas{width:100%;flex:1;min-height:0;object-fit:contain;background:#000}footer{font-size:10px;color:#a5b0c5;padding:9px;text-align:center}

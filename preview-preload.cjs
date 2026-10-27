@@ -1,0 +1,1 @@
+const {contextBridge,ipcRenderer}=require('electron');contextBridge.exposeInMainWorld('recordPreview',{onFrame:fn=>ipcRenderer.on('preview-frame',(_e,data)=>fn(data)),painted:id=>ipcRenderer.send('preview-painted',id)});

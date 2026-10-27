@@ -1,0 +1,8 @@
+(function(root){
+ function validateRect(rect,width,height){const {x,y,w,h}=rect;if(![x,y,w,h,width,height].every(Number.isInteger)||width<2||height<2||x<0||y<0||w<2||h<2||x+w>width||y+h>height)throw Error('区域必须在画面内，宽度和高度至少为 2 像素');return {...rect};}
+ function fromDrag(a,b,width,height){const clamp=(n,max)=>Math.max(0,Math.min(max,Math.round(n)));const ax=clamp(a.x,width),ay=clamp(a.y,height),bx=clamp(b.x,width),by=clamp(b.y,height);return {x:Math.min(ax,bx),y:Math.min(ay,by),w:Math.abs(ax-bx),h:Math.abs(ay-by)};}
+ function scaleRect(selection,width,height){if(!selection)return {x:0,y:0,w:width,h:height};const r=selection.rect;validateRect(r,selection.width,selection.height);const x=Math.min(width-2,Math.round(r.x/selection.width*width)),y=Math.min(height-2,Math.round(r.y/selection.height*height));const right=Math.max(x+2,Math.min(width,Math.round((r.x+r.w)/selection.width*width))),bottom=Math.max(y+2,Math.min(height,Math.round((r.y+r.h)/selection.height*height)));return {x,y,w:right-x,h:bottom-y};}
+ function outputSize(preset,width,height,rect){if(preset==='source')return {w:Math.max(2,Math.floor(rect.w/2)*2),h:Math.max(2,Math.floor(rect.h/2)*2)};if(preset!=='custom'){const w=Number(preset);return {w,h:w*9/16};}const w=Number(width),h=Number(height);if(![w,h].every(n=>Number.isInteger(n)&&n>=2&&n<=7680&&n%2===0)||w*h>33177600)throw Error('输出宽高应为 2–7680 之间的偶数，总像素不超过 8K');return {w,h};}
+ function draw(ctx,source,rect,x,y,w,h){const scale=Math.min(w/rect.w,h/rect.h),dw=rect.w*scale,dh=rect.h*scale;ctx.drawImage(source,rect.x,rect.y,rect.w,rect.h,x+(w-dw)/2,y+(h-dh)/2,dw,dh);}
+ const api={validateRect,fromDrag,scaleRect,outputSize,draw};if(typeof module==='object'&&module.exports)module.exports=api;else root.CaptureGeometry=api;
+})(globalThis);

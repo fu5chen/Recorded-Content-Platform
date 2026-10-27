@@ -1,0 +1,3 @@
+const {contextBridge,ipcRenderer}=require('electron');
+const channels=['state','sources','source','import','record-start','record-chunk','record-end','video-update','video-remove','subtitle','export','course-save','learner-save','live-start','live-stop','folder','share-info','share-start','share-stop','share-copy','desktop-region','prepare-play','preview-open','preview-frame'];
+contextBridge.exposeInMainWorld('studio',Object.fromEntries([...channels.map(k=>[k,(...args)=>ipcRenderer.invoke(k,...args)]),['onPreview',fn=>{ipcRenderer.on('preview-status',(_e,s)=>fn(s));}],['onLive',fn=>{ipcRenderer.on('live-status',(_e,s)=>fn(s));}]]));

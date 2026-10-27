@@ -1,0 +1,4 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const g=require('../ui/snap-geometry.js');
+const front={x:100,y:100,w:400,h:300,title:'front'},back={x:20,y:20,w:800,h:600};
+test('悬停按窗口叠放顺序选择，背景不误选',()=>{assert.equal(g.hit({x:200,y:200},[front,back]),front);assert.equal(g.hit({x:30,y:30},[front,back]),back);assert.equal(g.hit({x:999,y:999},[front,back]),null);});
+test('窗口边缘轻吸附、Alt 关闭、反向拖动和超过阈值不吸附',()=>{assert.deepEqual(g.drag({x:104,y:96},{x:496,y:404},[front],1920,1080),{x:100,y:100,w:400,h:300});assert.deepEqual(g.drag({x:104,y:96},{x:496,y:404},[front],1920,1080,false),{x:104,y:96,w:392,h:308});assert.deepEqual(g.drag({x:496,y:404},{x:104,y:96},[front],1920,1080),{x:100,y:100,w:400,h:300});assert.deepEqual(g.drag({x:120,y:120},{x:480,y:380},[front],1920,1080),{x:120,y:120,w:360,h:260});});

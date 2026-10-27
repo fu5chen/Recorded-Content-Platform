@@ -1,0 +1,49 @@
+{
+  "name": "luke-studio",
+  "version": "0.6.0",
+  "description": "Windows 录课工作台",
+  "main": "main.cjs",
+  "author": "Local Studio",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test tests/*.test.cjs",
+    "pack": "electron-builder --win --dir",
+    "dist": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "40.10.2",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "local.luke.studio",
+    "productName": "录课工作台",
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "share.cjs",
+      "ui/**/*",
+      "package.json",
+      "desktop-region.cjs",
+      "region-preload.cjs",
+      "media-response.cjs",
+      "preview.cjs",
+      "preview-preload.cjs",
+      "window-targets.cjs"
+    ],
+    "extraResources": [
+      {
+        "from": "tools",
+        "to": "tools"
+      }
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "signAndEditExecutable": false
+    },
+    "directories": {
+      "output": "release-realtime"
+    }
+  }
+}

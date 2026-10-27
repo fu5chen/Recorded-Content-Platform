@@ -1,0 +1,9 @@
+const {BrowserWindow,ipcMain}=require('electron');const path=require('node:path');
+function createPreview(main){let win=null,pending=null,sequence=0;
+ function settle(){if(pending){clearTimeout(pending.timer);pending.resolve();pending=null;}}
+ function notify(){if(!main.isDestroyed())main.webContents.send('preview-status',!!win&&!win.isDestroyed()&&!win.isMinimized());}
+ const onAck=(event,id)=>{if(event.sender===win?.webContents&&pending?.id===id)settle();};ipcMain.on('preview-painted',onAck);
+ main.once('closed',()=>{settle();ipcMain.removeListener('preview-painted',onAck);});
+ return {open(){if(win&&!win.isDestroyed()){if(win.isMinimized())win.restore();win.show();notify();return;}win=new BrowserWindow({width:390,height:290,minWidth:260,minHeight:200,title:'实时录制预览 · 关闭不停止录制',alwaysOnTop:true,autoHideMenuBar:true,backgroundColor:'#0c111b',webPreferences:{preload:path.join(__dirname,'preview-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});win.setContentProtection(true);win.webContents.setWindowOpenHandler(()=>({action:'deny'}));win.webContents.on('will-navigate',e=>e.preventDefault());win.once('closed',()=>{win=null;settle();notify();});win.on('minimize',()=>{settle();notify();});win.on('restore',notify);win.webContents.once('did-finish-load',notify);win.loadFile(path.join(__dirname,'ui','preview.html'));},close(){win?.close();},frame(data){if(!win||win.isDestroyed()||win.isMinimized())return;const {width,height,bytes}=data||{};if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width>480||height>480||bytes?.byteLength!==width*height*4)return;if(pending)return;return new Promise(resolve=>{const id=++sequence;pending={id,resolve,timer:setTimeout(settle,500)};win.webContents.send('preview-frame',{...data,id});});},get window(){return win;}};
+}
+module.exports={createPreview};

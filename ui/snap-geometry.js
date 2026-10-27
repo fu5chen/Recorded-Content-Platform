@@ -1,0 +1,5 @@
+(function(root){
+ function hit(point,targets){return targets.find(r=>point.x>=r.x&&point.x<r.x+r.w&&point.y>=r.y&&point.y<r.y+r.h)||null;}
+ function drag(a,b,targets,width,height,enabled=true){let x=Math.min(a.x,b.x),y=Math.min(a.y,b.y),right=Math.max(a.x,b.x),bottom=Math.max(a.y,b.y);if(enabled){const closest=(value,edges)=>edges.reduce((best,n)=>Math.abs(n-value)<Math.abs(best-value)?n:best,value+11);const xs=[0,width],ys=[0,height];for(const r of targets){if(bottom>=r.y&&y<=r.y+r.h)xs.push(r.x,r.x+r.w);if(right>=r.x&&x<=r.x+r.w)ys.push(r.y,r.y+r.h);}const snap=(v,edges)=>{const n=closest(v,edges);return Math.abs(n-v)<=10?n:v;};x=snap(x,xs);right=snap(right,xs);y=snap(y,ys);bottom=snap(bottom,ys);}x=Math.max(0,Math.min(width,Math.round(x)));right=Math.max(x,Math.min(width,Math.round(right)));y=Math.max(0,Math.min(height,Math.round(y)));bottom=Math.max(y,Math.min(height,Math.round(bottom)));return {x,y,w:right-x,h:bottom-y};}
+ const api={hit,drag};if(typeof module==='object'&&module.exports)module.exports=api;else root.SnapGeometry=api;
+})(globalThis);

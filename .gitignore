@@ -1,0 +1,14 @@
+node_modules/
+release/
+release-region/
+tools/*
+!tools/window-bounds.ps1
+*.log
+
+release-desktop-region/
+
+release-preview/
+
+release-snap/
+
+release-realtime/
